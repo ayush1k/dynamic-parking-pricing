@@ -38,44 +38,82 @@ DYNAMIC-PARKING-PRICING/
 
 ### ✅ Model 1: Occupancy-Based Pricing
 
-- 📂 Path: `model1/dynamic_pricing_m1.ipynb`
-- Uses historical data (`dataset.csv`) to simulate price change based on occupancy ratio.
-- Formula:
-  \
-  \[
-  \text{Price}_t = \text{Previous Price} + \alpha \cdot \left(\frac{\text{Occupancy}}{\text{Capacity}}\right)
-  \]
-- Gradual price adjustment with memory of previous price.
-- Built using `pandas` and `Bokeh`.
+**Objective**: Implements a simple dynamic pricing model where prices adjust based on occupancy levels.
+
+**Formula**:  
+`Price_t = Previous Price + α × (Occupancy / Capacity)`
+
+- `BASE_PRICE = ₹10`
+- `α = 2.0`
+- If capacity is 0 → retain previous price.
+- Uses temporal smoothing by retaining last price.
+
+**Tools**:  
+- Python, Pandas, Bokeh  
+- No real-time streaming, no external data
+
+**Limitation**:  
+Does not consider external influences like events, traffic, etc.
 
 ---
 
 ### 🚦 Model 2: Real-Time Demand-Based Pricing
 
-- 📂 Path: `model2/dynamic_pricing_m2.ipynb`
-- Simulates real-time demand-based pricing using Pathway.
-- Demand Formula:
-  \
-  \[
-  \text{Demand} = \alpha \cdot \left(\frac{\text{Occupancy}}{\text{Capacity}}\right) + \beta \cdot \text{QueueLength} - \gamma \cdot \text{TrafficLevel} + \delta \cdot \text{IsSpecialDay} + \epsilon \cdot \text{VehicleTypeWeight}
-  \]
-- Output is streamed to `output_pathway.jsonl`.
+**Objective**: Leverages the [Pathway](https://pathway.com) streaming engine to simulate real-time price updates using demand metrics.
 
----
+**Demand Function**:  
+`Demand = α × (Occupancy / Capacity) + β × QueueLength - γ × TrafficLevel + δ × IsSpecialDay + ε × VehicleTypeWeight`
+
+**Price Function**:  
+`Price = BasePrice × (1 + λ × NormalizedDemand)`
+
+**Constants**:
+
+| Symbol | Value | Meaning               |
+|--------|-------|------------------------|
+| α      | 1.0   | Occupancy weight       |
+| β      | 0.5   | Queue weight           |
+| γ      | 0.8   | Traffic penalty        |
+| δ      | 1.2   | Special day boost      |
+| ε      | 0.6   | Vehicle type influence |
+| λ      | 1.5   | Price sensitivity      |
+
+**Assumptions**:
+- Base price = ₹10
+- Prices clipped between ₹5 and ₹20
+- Streaming simulation: 1 row/second
+
+**Tools**:  
+- Python, Pandas, Pathway, Bokeh
+
+**Output File**:  
+`model2_output.jsonl`
 
 ### 🌐 Model 3: Demand + External Influences
 
-- 📂 Path: `model3/dynamic_pricing_m3.ipynb`
-- Adds **event** and **weather** data to influence demand and pricing.
-- Uses:
-  - `dataset_with_timestamp.csv` (real-time internal features)
-  - `external_events_weather.csv` (external influences)
-- Output: `model3_output.jsonl`
+**Objective**: Enhances Model 2 by incorporating **external events** (e.g., concerts, parades) and **weather** data to affect demand and pricing.
 
-#### Extended Demand Formula:
-\[
-\text{Demand} = \alpha \cdot \left(\frac{\text{Occupancy}}{\text{Capacity}}\right) + \beta \cdot \text{QueueLength} - \gamma \cdot \text{TrafficLevel} + \delta \cdot \text{IsSpecialDay} + \epsilon \cdot \text{VehicleTypeWeight} + \zeta \cdot \text{EventImpact} + \eta \cdot \text{WeatherImpact}
-\]
+**Extended Demand Function**:  
+`Demand = α × (Occupancy / Capacity) + β × QueueLength - γ × TrafficLevel + δ × IsSpecialDay + ε × VehicleTypeWeight + ζ × EventImpact + η × WeatherImpact`
+
+**Price Function**:  
+`Price = BasePrice × (1 + λ × Demand)`
+
+- Prices are clipped between **0.5x and 2x** of base price
+- Event/Weather impacts are mapped via dictionaries
+
+**Input Files**:
+- `dataset_with_timestamp.csv` — main streaming data
+- `external_events_weather.csv` — weather & events stream
+
+**Output File**:
+- `model3_output.jsonl`
+
+**Execution**:
+1. Install dependencies: `pip install pathway`
+2. Run: `dynamic_pricing_m3.ipynb`
+3. Output will be saved as `model3_output.jsonl`
+
 
 ---
 
