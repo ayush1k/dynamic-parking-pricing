@@ -1,0 +1,11 @@
+Timestamp,EventType,Weather
+04-10-2016 07:59:00,concert,sunny
+04-10-2016 08:25:00,sports,rainy
+04-10-2016 08:59:00,none,sunny
+04-10-2016 09:32:00,none,cloudy
+04-10-2016 09:59:00,festival,sunny
+04-10-2016 10:26:00,none,rainy
+04-10-2016 10:59:00,none,cloudy
+04-10-2016 11:25:00,concert,sunny
+04-10-2016 11:59:00,none,sunny
+04-10-2016 12:29:00,sports,cloudy
