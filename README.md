@@ -29,7 +29,7 @@ DYNAMIC-PARKING-PRICING/
 │   └── readme.md                        # Model-specific README
 │
 ├── LICENSE                              # MIT License
-└── README.md                            # Global README (you are here)
+└── README.md                            # Global README
 ```
 
 ---
